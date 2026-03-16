@@ -1,19 +1,30 @@
 public class PalindromeCheckerApp {
 
     public static void main(String[] args) {
+        String input = "racecar"; // You can change this to test
 
-        String input = "madam";
-        boolean isPalindrome = true;
-
-        // Loop only till half of the string length
-        for (int i = 0; i < input.length() / 2; i++) {
-            if (input.charAt(i) != input.charAt(input.length() - 1 - i)) {
-                isPalindrome = false;
-                break;
-            }
+        if (isPalindrome(input)) {
+            System.out.println(input + " is a palindrome.");
+        } else {
+            System.out.println(input + " is not a palindrome.");
         }
+    }
 
-        System.out.println("Input text: " + input);
-        System.out.println("Is it a Palindrome?: " + isPalindrome);
+    public static boolean isPalindrome(String str) {
+        // Step 1: Convert the string to a character array
+        char[] charArray = str.toCharArray();
+
+        int left = 0;
+        int right = charArray.length - 1;
+
+        // Step 2: Compare characters from both ends moving inward
+        while (left < right) {
+            if (charArray[left] != charArray[right]) {
+                return false; // Characters don't match
+            }
+            left++;
+            right--;
+        }
+        return true; // All characters matched
     }
 }
