@@ -1,10 +1,9 @@
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.Stack;
+import java.util.ArrayDeque;
+import java.util.Deque;
 
 public class PalindromeCheckerApp {
     public static void main(String[] args) {
-        String input = "civic"; // Test input
+        String input = "refer"; // Test input
 
         System.out.println("Input : " + input);
         boolean isPalindrome = checkPalindrome(input);
@@ -12,23 +11,25 @@ public class PalindromeCheckerApp {
     }
 
     public static boolean checkPalindrome(String input) {
-        Queue<Character> queue = new LinkedList<>();
-        Stack<Character> stack = new Stack<>();
+        // Use ArrayDeque for better performance
+        Deque<Character> deque = new ArrayDeque<>();
 
-        // 1. Insert each character into both queue and stack
+        // 1. Add each character to the deque
         for (char c : input.toCharArray()) {
-            queue.add(c);  // Enqueue (FIFO)
-            stack.push(c); // Push (LIFO)
+            deque.addLast(c);
         }
 
-        // 2. Compare characters until the queue becomes empty
-        while (!queue.isEmpty()) {
-            // dequeue() vs pop()
-            if (!queue.remove().equals(stack.pop())) {
+        // 2. Compare characters from both ends
+        // While there is more than 1 character left to compare
+        while (deque.size() > 1) {
+            Character first = deque.removeFirst();
+            Character last = deque.removeLast();
+
+            if (!first.equals(last)) {
                 return false; // Mismatch found
             }
         }
 
-        return true; // All matched
+        return true; // All matched or only one middle char left
     }
 }
