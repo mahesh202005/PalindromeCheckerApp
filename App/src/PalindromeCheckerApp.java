@@ -1,65 +1,78 @@
+import java.util.Scanner;
+
 /**
- * ==========================================================
- * MAIN CLASS - UseCase9PalindromeCheckerApp
- * ==========================================================
+ * ==============================================
+ * MAIN CLASS - UseCase11PalindromeCheckerApp
+ * ==============================================
  *
- * Use Case 9: Recursive Palindrome Checker
+ * Use Case 11: Object-Oriented Palindrome Service
  *
  * Description:
- * This class validates a palindrome using recursion.
+ * This class demonstrates palindrome validation using
+ * object-oriented design.
  *
- * Characters are compared from the outer positions
- * moving inward using recursive calls.
+ * The palindrome logic is encapsulated inside a
+ * PalindromeService class.
  *
- * The recursion stops when:
- * - All characters are matched, or
- * - A mismatch is found.
- *
- * This use case demonstrates divide-and-conquer
- * logic using method recursion.
+ * This improves:
+ * - Reusability
+ * - Readability
+ * - Separation of concerns
  *
  * @author Developer
- * @version 9.0
+ * @version 11.0
  */
 
 public class PalindromeCheckerApp {
 
     /**
-     * Application entry point for UC9.
+     * Application entry point for UC11.
      *
      * @param args Command-line arguments
      */
     public static void main(String[] args) {
 
-        String input = "madam";
+        Scanner scanner = new Scanner(System.in);
 
-        boolean result = check(input, 0, input.length() - 1);
+        System.out.print("Input : ");
+        String input = scanner.nextLine();
 
-        System.out.println("Input : " + input);
-        System.out.println("Is Palindrome? : " + result);
+        PalindromeService service = new PalindromeService();
+
+        boolean result = service.checkPalindrome(input);
+
+        System.out.println("Is Palindrome?: " + result);
+
+        scanner.close();
     }
+}
+
+/**
+ * Service class that contains palindrome logic.
+ */
+class PalindromeService {
 
     /**
-     * Recursively checks whether a string is palindrome.
+     * Checks whether the input string is a palindrome.
      *
-     * @param s Input string
-     * @param start Starting index
-     * @param end Ending index
-     * @return true if palindrome, otherwise false
+     * @param input input string
+     * @return true if palindrome, false otherwise
      */
-    private static boolean check(String s, int start, int end) {
+    public boolean checkPalindrome(String input) {
 
-        // Base condition
-        if (start >= end) {
-            return true;
+        // Initialize pointers
+        int start = 0;
+        int end = input.length() - 1;
+
+        // Compare characters moving inward
+        while (start < end) {
+            if (input.charAt(start) != input.charAt(end)) {
+                return false;
+            }
+            start++;
+            end--;
         }
 
-        // If characters do not match
-        if (s.charAt(start) != s.charAt(end)) {
-            return false;
-        }
-
-        // Recursive call
-        return check(s, start + 1, end - 1);
+        return true;
     }
 }
