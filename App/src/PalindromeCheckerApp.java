@@ -1,52 +1,111 @@
+package App.src;
+
 import java.util.*;
 
 /**
- * MAIN CLASS - UseCase13PalindromeCheckerApp
- *
- * Use Case 13: Performance Comparison of Palindrome Algorithms
- *
- * Description:
- * This class measures and compares the execution performance of
- * different palindrome validation algorithms.
- *
- * At this stage, the application:
- * - Implements multiple palindrome checking strategies
- * - Captures execution start and end time using System.nanoTime()
- * - Calculates total execution duration
- * - Displays benchmarking results for comparison
- *
- * This use case focuses purely on performance measurement
- * and algorithm comparison.
- * The goal is to introduce benchmarking concepts.
- *
- * @author Developer
+ * MAIN CLASS - PalindromeCheckerApp
+ * 
+ * Combined Use Cases:
+ * UC12: Strategy Pattern for Palindrome Algorithms
+ * UC13: Performance Comparison of Palindrome Algorithms
+ * 
+ * @author mahesh202005
  * @version 13.0
  */
 public class PalindromeCheckerApp {
-
-    /**
-     * Interface defining the contract for all palindrome checking algorithms
-     */
-    interface PalindromeStrategy {
+    
+    // ==================== UC12: Strategy Pattern Interface ====================
+    public interface PalindromeStrategy {
         boolean check(String input);
         String getStrategyName();
     }
-
+    
+    // ==================== UC12: Strategy Implementations ====================
+    
     /**
-     * Strategy 1: Two-Pointer Technique
-     * Most efficient - O(n/2) comparisons
+     * StackStrategy - Implements palindrome validation using Stack
      */
-    static class TwoPointerStrategy implements PalindromeStrategy {
-
+    static class StackStrategy implements PalindromeStrategy {
+        
         @Override
         public boolean check(String input) {
             if (input == null || input.isEmpty()) {
                 return true;
             }
-
+            
+            Stack<Character> stack = new Stack<>();
+            
+            // Push all characters to stack
+            for (char c : input.toCharArray()) {
+                stack.push(c);
+            }
+            
+            // Compare with original string
+            for (char c : input.toCharArray()) {
+                if (c != stack.pop()) {
+                    return false;
+                }
+            }
+            
+            return true;
+        }
+        
+        @Override
+        public String getStrategyName() {
+            return "Stack Strategy (UC12)";
+        }
+    }
+    
+    /**
+     * DequeStrategy - Implements palindrome validation using Deque
+     */
+    static class DequeStrategy implements PalindromeStrategy {
+        
+        @Override
+        public boolean check(String input) {
+            if (input == null || input.isEmpty()) {
+                return true;
+            }
+            
+            Deque<Character> deque = new ArrayDeque<>();
+            
+            // Add all characters to deque
+            for (char c : input.toCharArray()) {
+                deque.add(c);
+            }
+            
+            // Compare from both ends
+            while (deque.size() > 1) {
+                if (deque.removeFirst() != deque.removeLast()) {
+                    return false;
+                }
+            }
+            
+            return true;
+        }
+        
+        @Override
+        public String getStrategyName() {
+            return "Deque Strategy (UC12)";
+        }
+    }
+    
+    // ==================== UC13: Additional Strategy Implementations ====================
+    
+    /**
+     * TwoPointerStrategy - Most efficient O(n) approach
+     */
+    static class TwoPointerStrategy implements PalindromeStrategy {
+        
+        @Override
+        public boolean check(String input) {
+            if (input == null || input.isEmpty()) {
+                return true;
+            }
+            
             int left = 0;
             int right = input.length() - 1;
-
+            
             while (left < right) {
                 if (input.charAt(left) != input.charAt(right)) {
                     return false;
@@ -56,111 +115,39 @@ public class PalindromeCheckerApp {
             }
             return true;
         }
-
+        
         @Override
         public String getStrategyName() {
-            return "Two-Pointer Technique";
+            return "Two-Pointer Strategy (UC13)";
         }
     }
-
+    
     /**
-     * Strategy 2: StringBuilder Reverse
-     * Uses built-in reverse method
+     * StringBuilderStrategy - Uses built-in reverse
      */
     static class StringBuilderStrategy implements PalindromeStrategy {
-
+        
         @Override
         public boolean check(String input) {
             if (input == null || input.isEmpty()) {
                 return true;
             }
-
+            
             String reversed = new StringBuilder(input).reverse().toString();
             return input.equals(reversed);
         }
-
+        
         @Override
         public String getStrategyName() {
-            return "StringBuilder Reverse";
+            return "StringBuilder Strategy (UC13)";
         }
     }
-
+    
     /**
-     * Strategy 3: Stack-based Approach
-     * Uses Stack data structure (LIFO)
-     */
-    static class StackStrategy implements PalindromeStrategy {
-
-        @Override
-        public boolean check(String input) {
-            if (input == null || input.isEmpty()) {
-                return true;
-            }
-
-            Stack<Character> stack = new Stack<>();
-
-            // Push all characters to stack
-            for (char c : input.toCharArray()) {
-                stack.push(c);
-            }
-
-            // Compare with original string
-            for (char c : input.toCharArray()) {
-                if (c != stack.pop()) {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        @Override
-        public String getStrategyName() {
-            return "Stack-based Approach";
-        }
-    }
-
-    /**
-     * Strategy 4: Deque-based Approach
-     * Uses Deque data structure (double-ended queue)
-     */
-    static class DequeStrategy implements PalindromeStrategy {
-
-        @Override
-        public boolean check(String input) {
-            if (input == null || input.isEmpty()) {
-                return true;
-            }
-
-            Deque<Character> deque = new ArrayDeque<>();
-
-            // Add all characters to deque
-            for (char c : input.toCharArray()) {
-                deque.add(c);
-            }
-
-            // Compare from both ends
-            while (deque.size() > 1) {
-                if (deque.removeFirst() != deque.removeLast()) {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        @Override
-        public String getStrategyName() {
-            return "Deque-based Approach";
-        }
-    }
-
-    /**
-     * Strategy 5: Recursive Approach
-     * Uses recursion to check palindrome
+     * RecursiveStrategy - Uses recursion
      */
     static class RecursiveStrategy implements PalindromeStrategy {
-
+        
         @Override
         public boolean check(String input) {
             if (input == null || input.isEmpty()) {
@@ -168,7 +155,7 @@ public class PalindromeCheckerApp {
             }
             return checkRecursive(input, 0, input.length() - 1);
         }
-
+        
         private boolean checkRecursive(String input, int left, int right) {
             if (left >= right) {
                 return true;
@@ -178,42 +165,44 @@ public class PalindromeCheckerApp {
             }
             return checkRecursive(input, left + 1, right - 1);
         }
-
+        
         @Override
         public String getStrategyName() {
-            return "Recursive Approach";
+            return "Recursive Strategy (UC13)";
         }
     }
-
+    
+    // ==================== UC12: Context Class ====================
+    
     /**
-     * Strategy 6: Character Array Comparison
-     * Converts string to char array and compares
+     * Context class that uses a PalindromeStrategy
      */
-    static class CharArrayStrategy implements PalindromeStrategy {
-
-        @Override
-        public boolean check(String input) {
-            if (input == null || input.isEmpty()) {
-                return true;
-            }
-
-            char[] chars = input.toCharArray();
-            int length = chars.length;
-
-            for (int i = 0; i < length / 2; i++) {
-                if (chars[i] != chars[length - 1 - i]) {
-                    return false;
-                }
-            }
-            return true;
+    static class PalindromeChecker {
+        private PalindromeStrategy strategy;
+        
+        public PalindromeChecker() {
+            this.strategy = new TwoPointerStrategy(); // Default to efficient strategy
         }
-
-        @Override
+        
+        public PalindromeChecker(PalindromeStrategy strategy) {
+            this.strategy = strategy;
+        }
+        
+        public void setStrategy(PalindromeStrategy strategy) {
+            this.strategy = strategy;
+        }
+        
+        public boolean checkPalindrome(String input) {
+            return strategy.check(input);
+        }
+        
         public String getStrategyName() {
-            return "Character Array Comparison";
+            return strategy.getStrategyName();
         }
     }
-
+    
+    // ==================== UC13: Performance Benchmarking ====================
+    
     /**
      * Class to store performance test results
      */
@@ -222,226 +211,161 @@ public class PalindromeCheckerApp {
         boolean result;
         long executionTimeNs;
         String input;
-
+        
         PerformanceResult(String strategyName, boolean result, long executionTimeNs, String input) {
             this.strategyName = strategyName;
             this.result = result;
             this.executionTimeNs = executionTimeNs;
             this.input = input;
         }
-
+        
         @Override
         public String toString() {
-            return String.format("%-30s | Input: %-20s | Is Palindrome? : %-5b | Execution Time : %d ns",
-                    strategyName, "\"" + input + "\"", result, executionTimeNs);
+            return String.format("%-35s | Input: %-15s | Palindrome: %-5b | Time: %d ns",
+                strategyName, "\"" + input + "\"", result, executionTimeNs);
         }
     }
-
+    
     /**
      * Benchmark runner class
      */
     static class PalindromeBenchmark {
         private List<PalindromeStrategy> strategies;
-
+        
         public PalindromeBenchmark() {
             strategies = Arrays.asList(
-                    new TwoPointerStrategy(),
-                    new StringBuilderStrategy(),
-                    new StackStrategy(),
-                    new DequeStrategy(),
-                    new RecursiveStrategy(),
-                    new CharArrayStrategy()
+                new TwoPointerStrategy(),    // UC13
+                new StringBuilderStrategy(), // UC13
+                new StackStrategy(),         // UC12
+                new DequeStrategy(),          // UC12
+                new RecursiveStrategy()       // UC13
             );
         }
-
+        
         /**
-         * Runs performance test for a single input string
-         * @param input The string to test
-         * @return List of performance results for all strategies
+         * Runs performance test for a single input
          */
         public List<PerformanceResult> runBenchmark(String input) {
             List<PerformanceResult> results = new ArrayList<>();
-
-            System.out.println("\n" + "=".repeat(100));
-            System.out.println("Benchmarking for input: \"" + input + "\"");
-            System.out.println("=".repeat(100));
-
-            // Warm-up phase to stabilize JVM
+            
+            // Warm-up phase
             for (PalindromeStrategy strategy : strategies) {
                 strategy.check(input);
             }
-
+            
             // Actual benchmarking
             for (PalindromeStrategy strategy : strategies) {
-                // Start time measurement
                 long startTime = System.nanoTime();
-
-                // Execute the algorithm
                 boolean result = strategy.check(input);
-
-                // End time measurement
                 long endTime = System.nanoTime();
-                long executionTime = endTime - startTime;
-
-                // Store result
+                
                 results.add(new PerformanceResult(
-                        strategy.getStrategyName(),
-                        result,
-                        executionTime,
-                        input
+                    strategy.getStrategyName(),
+                    result,
+                    endTime - startTime,
+                    input
                 ));
             }
-
+            
             return results;
         }
-
-        /**
-         * Runs performance test for multiple input strings
-         * @param inputs Array of strings to test
-         */
-        public void runComprehensiveBenchmark(String[] inputs) {
-            Map<String, List<PerformanceResult>> allResults = new LinkedHashMap<>();
-
-            for (String input : inputs) {
-                allResults.put(input, runBenchmark(input));
-            }
-
-            // Display summary statistics
-            displaySummaryStatistics(allResults);
-        }
-
-        private void displaySummaryStatistics(Map<String, List<PerformanceResult>> allResults) {
-            System.out.println("\n" + "=".repeat(100));
-            System.out.println("SUMMARY STATISTICS (Average Execution Times)");
-            System.out.println("=".repeat(100));
-
-            // Calculate averages for each strategy
-            Map<String, List<Long>> strategyTimes = new HashMap<>();
-
-            for (List<PerformanceResult> results : allResults.values()) {
-                for (PerformanceResult result : results) {
-                    strategyTimes.computeIfAbsent(result.strategyName, k -> new ArrayList<>())
-                            .add(result.executionTimeNs);
-                }
-            }
-
-            // Display averages
-            System.out.printf("%-30s | %-20s%n", "Strategy", "Average Time (ns)");
-            System.out.println("-".repeat(55));
-
-            for (Map.Entry<String, List<Long>> entry : strategyTimes.entrySet()) {
-                double average = entry.getValue().stream()
-                        .mapToLong(Long::longValue)
-                        .average()
-                        .orElse(0);
-                System.out.printf("%-30s | %,.0f ns%n", entry.getKey(), average);
-            }
-        }
     }
-
+    
+    // ==================== MAIN APPLICATION ====================
+    
     /**
-     * Application entry point for UC13.
-     *
-     * @param args Command-line arguments (not used)
+     * Main method - Entry point for combined UC12 and UC13
      */
     public static void main(String[] args) {
         System.out.println("==========================================");
-        System.out.println("UC13: Palindrome Algorithm Performance Comparison");
+        System.out.println("PALINDROME CHECKER APP");
+        System.out.println("UC12: Strategy Pattern + UC13: Performance Comparison");
         System.out.println("==========================================\n");
-
+        
+        PalindromeChecker checker = new PalindromeChecker();
         PalindromeBenchmark benchmark = new PalindromeBenchmark();
         Scanner scanner = new Scanner(System.in);
-
-        // Test with the specific case from the example
-        System.out.println("Testing with example input: \"level\"");
-        List<PerformanceResult> exampleResults = benchmark.runBenchmark("level");
-
-        // Display results for the example
-        System.out.println("\n" + "-".repeat(100));
-        System.out.println("PERFORMANCE RESULTS");
-        System.out.println("-".repeat(100));
-
-        // Find and display the fastest strategy for this input
-        PerformanceResult fastest = Collections.min(exampleResults,
-                Comparator.comparingLong(r -> r.executionTimeNs));
-
-        for (PerformanceResult result : exampleResults) {
-            System.out.println(result);
-        }
-
-        System.out.println("\n" + "=".repeat(100));
-        System.out.printf("Fastest Strategy: %s (%d ns)%n",
-                fastest.strategyName, fastest.executionTimeNs);
-        System.out.println("=".repeat(100));
-
-        // Interactive mode for custom testing
-        System.out.println("\n" + "=".repeat(100));
-        System.out.println("INTERACTIVE BENCHMARKING MODE");
-        System.out.println("Enter strings to benchmark (type 'exit' to quit)");
-        System.out.println("=".repeat(100));
-
+        
         while (true) {
-            System.out.print("\nEnter a string to benchmark: ");
-            String input = scanner.nextLine().trim();
-
-            if (input.equalsIgnoreCase("exit")) {
+            System.out.println("\n--- MENU ---");
+            System.out.println("1. UC12: Check palindrome with specific strategy");
+            System.out.println("2. UC13: Compare performance of all strategies");
+            System.out.println("3. Exit");
+            System.out.print("Enter choice: ");
+            
+            String choice = scanner.nextLine().trim();
+            
+            if (choice.equals("3")) {
                 break;
             }
-
+            
+            System.out.print("Enter string to check: ");
+            String input = scanner.nextLine().trim();
+            
             if (input.isEmpty()) {
-                System.out.println("Please enter a non-empty string.");
+                System.out.println("Please enter a valid string.");
                 continue;
             }
-
-            // Run benchmark for the input
-            List<PerformanceResult> results = benchmark.runBenchmark(input);
-
-            // Display results sorted by execution time
-            results.sort(Comparator.comparingLong(r -> r.executionTimeNs));
-
-            System.out.println("\n" + "-".repeat(100));
-            System.out.println("RESULTS (Sorted by Performance)");
-            System.out.println("-".repeat(100));
-
-            for (PerformanceResult result : results) {
-                System.out.println(result);
-            }
-
-            // Show performance ratios
-            System.out.println("\n" + "-".repeat(100));
-            System.out.println("PERFORMANCE COMPARISON");
-            System.out.println("-".repeat(100));
-
-            long baseline = results.get(0).executionTimeNs; // Fastest time
-            for (int i = 1; i < results.size(); i++) {
-                PerformanceResult result = results.get(i);
-                double ratio = (double) result.executionTimeNs / baseline;
-                System.out.printf("%s is %.2fx slower than %s%n",
-                        result.strategyName,
-                        ratio,
-                        results.get(0).strategyName);
+            
+            switch (choice) {
+                case "1":
+                    // UC12: Strategy selection
+                    System.out.println("\nSelect strategy:");
+                    System.out.println("1. Stack Strategy");
+                    System.out.println("2. Deque Strategy");
+                    System.out.println("3. Two-Pointer Strategy");
+                    System.out.println("4. StringBuilder Strategy");
+                    System.out.println("5. Recursive Strategy");
+                    System.out.print("Enter choice: ");
+                    
+                    String stratChoice = scanner.nextLine().trim();
+                    
+                    switch (stratChoice) {
+                        case "1": checker.setStrategy(new StackStrategy()); break;
+                        case "2": checker.setStrategy(new DequeStrategy()); break;
+                        case "3": checker.setStrategy(new TwoPointerStrategy()); break;
+                        case "4": checker.setStrategy(new StringBuilderStrategy()); break;
+                        case "5": checker.setStrategy(new RecursiveStrategy()); break;
+                        default: 
+                            System.out.println("Invalid choice, using default");
+                            checker.setStrategy(new TwoPointerStrategy());
+                    }
+                    
+                    long startTime = System.nanoTime();
+                    boolean result = checker.checkPalindrome(input);
+                    long endTime = System.nanoTime();
+                    
+                    System.out.println("\n--- UC12 Result ---");
+                    System.out.println("Input: \"" + input + "\"");
+                    System.out.println("Strategy: " + checker.getStrategyName());
+                    System.out.println("Is Palindrome? : " + result);
+                    System.out.println("Execution Time : " + (endTime - startTime) + " ns");
+                    break;
+                    
+                case "2":
+                    // UC13: Performance comparison
+                    System.out.println("\n--- UC13 Performance Comparison ---");
+                    List<PerformanceResult> results = benchmark.runBenchmark(input);
+                    
+                    // Sort by execution time
+                    results.sort(Comparator.comparingLong(r -> r.executionTimeNs));
+                    
+                    for (PerformanceResult pr : results) {
+                        System.out.println(pr);
+                    }
+                    
+                    // Show fastest
+                    PerformanceResult fastest = results.get(0);
+                    System.out.println("\n✓ Fastest: " + fastest.strategyName + 
+                                     " (" + fastest.executionTimeNs + " ns)");
+                    break;
+                    
+                default:
+                    System.out.println("Invalid choice. Please try again.");
             }
         }
-
-        // Run comprehensive benchmark with multiple test cases
-        System.out.println("\n" + "=".repeat(100));
-        System.out.println("COMPREHENSIVE BENCHMARK WITH MULTIPLE TEST CASES");
-        System.out.println("=".repeat(100));
-
-        String[] testInputs = {
-                "a",                    // Single character
-                "ab",                   // Two characters, not palindrome
-                "aa",                   // Two characters, palindrome
-                "level",                // 5 characters, palindrome
-                "hello",                // 5 characters, not palindrome
-                "racecar",              // 7 characters, palindrome
-                "abcdefghijklmnopqrstuvwxyz", // Long non-palindrome
-                "amanaplanacanalpanama" // Long palindrome (without spaces)
-        };
-
-        benchmark.runComprehensiveBenchmark(testInputs);
-
+        
         scanner.close();
-        System.out.println("\nBenchmarking completed. Program terminated.");
+        System.out.println("\nProgram terminated.");
     }
 }
